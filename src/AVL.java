@@ -106,18 +106,61 @@ public class AVL<T extends Comparable<? super T>> {
         // Base Case - Data Not Found
         if (currNode == null)
             throw new NoSuchElementException();
-        // Base Case - Data Found
+
         int compVal = currNode.getData().compareTo(data);
+        // Base Case - Data Found
         if (compVal == 0){
-            // Remove subroutine
+            // Save data to dummy node to return & decrement size
+            dummy.setData(currNode.getData());
+            size--;
+            // No child case
+            if (currNode.getLeft() == null && currNode.getRight() == null)
+                return null;
+            // Left Child
+            else if (currNode.getLeft() != null && currNode.getRight() == null){
+                return currNode.getLeft();
+            }
+            // Right Child
+            else if (currNode.getLeft() == null && currNode.getRight() != null){
+                return currNode.getRight();
+            }
+            // 2 Child
+            else {
+                AVLNode<T> dummy2 = new AVLNode<>(null);
+                currNode.setRight(successor(currNode.getRight(),dummy2));
+                currNode.setData(dummy2.getData());
+                updateHeightAndBF(currNode);
+                return currNode;
+            }
         }
+        // Recursive Find
         else if (compVal > 0){
             currNode.setLeft(innerRemove(data,currNode.getLeft(),dummy));
+            updateHeightAndBF(currNode);
         }
         else {
             currNode.setRight(innerRemove(data,currNode,dummy));
+            updateHeightAndBF(currNode);
         }
+        if (currNode.getBalanceFactor() > 1 || currNode.getBalanceFactor() < -1){
+            currNode = balance(currNode);
+        }
+        return currNode;
+    }
 
+    private AVLNode<T> successor(AVLNode<T> currNode, AVLNode<T> dummy2){
+        // Base Case - Found Successor
+        if (currNode.getLeft() == null){
+            dummy2.setData(currNode.getData());
+            size--;
+            return  null;
+        }
+        // Recurse
+        else {
+            currNode.setLeft(successor(currNode.getLeft(),dummy2));
+            updateHeightAndBF(currNode);
+            return currNode;
+        }
     }
 
     /**
