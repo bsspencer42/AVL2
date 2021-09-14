@@ -111,11 +111,14 @@ public class AVL<T extends Comparable<? super T>> {
         // Base Case - Data Found
         if (compVal == 0){
             // Save data to dummy node to return & decrement size
+            System.out.println("Found!");
             dummy.setData(currNode.getData());
             size--;
             // No child case
-            if (currNode.getLeft() == null && currNode.getRight() == null)
+            if (currNode.getLeft() == null && currNode.getRight() == null) {
+                System.out.println("No child");
                 return null;
+            }
             // Left Child
             else if (currNode.getLeft() != null && currNode.getRight() == null){
                 return currNode.getLeft();
@@ -130,18 +133,20 @@ public class AVL<T extends Comparable<? super T>> {
                 currNode.setRight(successor(currNode.getRight(),dummy2));
                 currNode.setData(dummy2.getData());
                 updateHeightAndBF(currNode);
-                return currNode;
             }
         }
         // Recursive Find
         else if (compVal > 0){
+            System.out.println("Go Left");
             currNode.setLeft(innerRemove(data,currNode.getLeft(),dummy));
             updateHeightAndBF(currNode);
         }
         else {
-            currNode.setRight(innerRemove(data,currNode,dummy));
+            System.out.println("Go Right");
+            currNode.setRight(innerRemove(data,currNode.getRight(),dummy));
             updateHeightAndBF(currNode);
         }
+
         if (currNode.getBalanceFactor() > 1 || currNode.getBalanceFactor() < -1){
             currNode = balance(currNode);
         }
@@ -152,13 +157,14 @@ public class AVL<T extends Comparable<? super T>> {
         // Base Case - Found Successor
         if (currNode.getLeft() == null){
             dummy2.setData(currNode.getData());
-            size--;
-            return  null;
+            return  currNode.getRight();
         }
         // Recurse
         else {
             currNode.setLeft(successor(currNode.getLeft(),dummy2));
             updateHeightAndBF(currNode);
+            if (Math.abs(currNode.getBalanceFactor()) > 1)
+                currNode = balance(currNode);
             return currNode;
         }
     }
