@@ -8,7 +8,7 @@ public class AVL<T extends Comparable<? super T>> {
     /*
      * Do not add new instance variables or modify existing ones.
      */
-    public AVLNode<T> root;
+    public AVLNode<T> root; // Change to private
     private int size;
 
     /*
@@ -34,6 +34,8 @@ public class AVL<T extends Comparable<? super T>> {
      * @throws java.lang.IllegalArgumentException If data is null.
      */
     public void add(T data){
+        if (data == null)
+            throw new IllegalArgumentException();
         root = innerAdd(data, root);
     }
     private AVLNode<T> innerAdd(T data, AVLNode<T> currNode){
@@ -44,11 +46,12 @@ public class AVL<T extends Comparable<? super T>> {
             size++;
             return newNode;
         }
-        // Recursive Part
         int compVal = currNode.getData().compareTo(data);
+        // Base Case 2 - Data Exists
         if (compVal == 0){
             return currNode;
         }
+        // Recursive Part
         else if (compVal > 0){
             currNode.setLeft(innerAdd(data,currNode.getLeft()));
             updateHeightAndBF(currNode);
@@ -93,7 +96,28 @@ public class AVL<T extends Comparable<? super T>> {
      */
     public T remove(T data) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
-        return null;
+        if (data == null)
+            throw new IllegalArgumentException();
+        AVLNode<T> dummy = new AVLNode<>(null);
+        root = innerRemove(data,root,dummy);
+        return dummy.getData();
+    }
+    private AVLNode<T> innerRemove(T data, AVLNode<T> currNode,AVLNode<T> dummy){
+        // Base Case - Data Not Found
+        if (currNode == null)
+            throw new NoSuchElementException();
+        // Base Case - Data Found
+        int compVal = currNode.getData().compareTo(data);
+        if (compVal == 0){
+            // Remove subroutine
+        }
+        else if (compVal > 0){
+            currNode.setLeft(innerRemove(data,currNode.getLeft(),dummy));
+        }
+        else {
+            currNode.setRight(innerRemove(data,currNode,dummy));
+        }
+
     }
 
     /**
